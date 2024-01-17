@@ -1,2 +1,3 @@
-domains.json
+*.swp
 dynamic_ip
+domains.json
