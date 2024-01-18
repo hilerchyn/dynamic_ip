@@ -16,16 +16,16 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(querySubDomainsCmd)
+	rootCmd.AddCommand(queryRecordsCmd)
 }
 
-var querySubDomainsCmd = &cobra.Command{
-	Use:   "querySubDomains",
-	Short: "Query sub-domains of specific domain",
-	RunE:  querySubDomainsCmdFunc,
+var queryRecordsCmd = &cobra.Command{
+	Use:   "queryRecords",
+	Short: "Query records of specific domain",
+	RunE:  queryRecordsCmdFunc,
 }
 
-func querySubDomainsCmdFunc(cmd *cobra.Command, args []string) error {
+func queryRecordsCmdFunc(cmd *cobra.Command, args []string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("please specify domain name")
 	}
