@@ -16,13 +16,21 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(queryRecordsCmd)
+	rootCmd.AddCommand(newQueryRecordsCmd())
 }
 
-var queryRecordsCmd = &cobra.Command{
-	Use:   "queryRecords",
-	Short: "Query records of specific domain",
-	RunE:  queryRecordsCmdFunc,
+var recordName string
+
+func newQueryRecordsCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "queryRecords",
+		Short: "Query records of specific domain",
+		RunE:  queryRecordsCmdFunc,
+	}
+
+	cmd.Flags().StringVarP(&recordName, "recordName", "r", "", "")
+
+	return cmd
 }
 
 func queryRecordsCmdFunc(cmd *cobra.Command, args []string) error {
@@ -54,6 +62,22 @@ func queryRecordsCmdFunc(cmd *cobra.Command, args []string) error {
 	err := pkg.Invoke(tryErr)
 	if err != nil {
 		return err
+	}
+
+	if recordName != "" {
+		ip := ""
+		for _, record := range domainRecords.Record {
+			if *record.RR != recordName {
+				continue
+			}
+			ip = *record.Value
+			break
+		}
+
+		if ip != "" {
+			fmt.Println(ip)
+			return nil
+		}
 	}
 
 	t := table.NewWriter()
