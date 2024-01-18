@@ -3,6 +3,7 @@ module dynamic_ip
 go 1.21.4
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/alibabacloud-go/alidns-20150109/v4 v4.0.10
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.5
 	github.com/alibabacloud-go/tea v1.2.1
@@ -20,6 +21,7 @@ require (
 	github.com/alibabacloud-go/tea-utils v1.3.1 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
 	github.com/aliyun/credentials-go v1.3.1 // indirect
+	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/clbanning/mxj/v2 v2.5.5 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
