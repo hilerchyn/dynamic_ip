@@ -41,6 +41,7 @@ func queryRecordsCmdFunc(cmd *cobra.Command, args []string) error {
 	domainName := args[0]
 	describeDomainRecordsRequest := &alidns20150109.DescribeDomainRecordsRequest{
 		DomainName: tea.String(domainName),
+		PageSize:   tea.Int64(500),
 	}
 	runtime := &util.RuntimeOptions{}
 	domainRecords := &client.DescribeDomainRecordsResponseBodyDomainRecords{}
