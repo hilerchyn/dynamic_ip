@@ -9,7 +9,9 @@ recordName="live"
 domainName="7shu.co"
 cmd="/home/tao/Desktop/tools/dynamic_ip/dynamic_ip"
 logPath="/var/log/dynamic_ip"
-logFile="dynamic_ip_$(date +"%Y%m%d").log"
+logFile="changes.log"
+logrotateCfg="/home/tao/Desktop/tools/dynamic_ip/logrotate"
+logrotateBin="/usr/sbin/logrotate"
 
 export ALIBABA_CLOUD_ACCESS_KEY_ID=$accessKeyId
 export ALIBABA_CLOUD_ACCESS_KEY_SECRET=$accessKeySecret
@@ -22,6 +24,20 @@ fnCheck() {
 
     if [ ! -d "$logPath" ]; then
         echo "An error occurred: Log path [$logPath] not found." >&2
+        exit 1
+    fi
+
+    if command -v "jq" &> /dev/null; then
+        echo -n
+    else
+        echo "An error occurred: Command [jq] not exists"
+        exit 1
+    fi
+
+    if command -v "$logrotateBin" &> /dev/null; then
+        echo -n
+    else
+        echo "An error occurred: Command [logrotate] not exists"
         exit 1
     fi
 }
@@ -46,4 +62,8 @@ if [ "$oldIp" != "$dynamicIp" ] ; then
     else
         fnLogger "IP chang from [$oldIp] to [$dynamicIp] failed, response: $result"
     fi
+else
+    echo "$(date +'%Y-%m-%d %H:%M:%S'): old: $oldIp, new: $dynamicIp"
 fi
+
+$("$logrotateBin" -f "$logrotateCfg")

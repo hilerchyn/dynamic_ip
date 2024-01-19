@@ -1,0 +1,8 @@
+/var/log/dynamic_ip/changes.log {
+  rotate 4
+  weekly
+  compress
+  missingok
+  notifempty
+  delaycompress
+}
