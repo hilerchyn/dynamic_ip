@@ -66,7 +66,7 @@ func updateDomainRecordCmdFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	println(updateResponseBody.String())
+	fmt.Println(updateResponseBody.String())
 
 	return nil
 }
