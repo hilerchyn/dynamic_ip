@@ -7,22 +7,45 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/spf13/cobra"
 )
 
+var ipQueryApi string
+var apiMap map[string]func(*cobra.Command, []string) error
+
 func init() {
-	rootCmd.AddCommand(queryIpCmd)
+	apiMap = map[string]func(*cobra.Command, []string) error{}
+	apiMap["icanhazip"] = queryIpViaIcanhazip
+	apiMap["chinaz"] = queryIpViaChinaz
+
+	rootCmd.AddCommand(newQueryIpCmd())
 }
 
-var queryIpCmd = &cobra.Command{
-	Use:   "queryIp",
-	Short: "Query dynamic ip",
-	RunE:  queryIpCmdFunc,
+func newQueryIpCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "queryIp",
+		Short: "Query dynamic ip",
+		RunE:  queryIpCmdFunc,
+	}
+
+	cmd.Flags().StringVarP(&ipQueryApi, "ipQueryApi", "q", "icanhazip", "support value: icanhazip, chinaz")
+
+	return cmd
 }
 
 func queryIpCmdFunc(cmd *cobra.Command, args []string) error {
+	queryFunc, ok := apiMap[ipQueryApi]
+	if !ok {
+		return fmt.Errorf("IP query API of [%s] not found", ipQueryApi)
+	}
+
+	return queryFunc(cmd, args)
+}
+
+func queryIpViaChinaz(cmd *cobra.Command, args []string) error {
 	resp, err := http.Get("https://ip.tool.chinaz.com/")
 	if err != nil {
 		return err
@@ -68,6 +91,27 @@ func queryIpCmdFunc(cmd *cobra.Command, args []string) error {
 	}
 
 	fmt.Println(ips[0])
+
+	return nil
+}
+
+func queryIpViaIcanhazip(cmd *cobra.Command, args []string) error {
+	resp, err := http.Get("https://ipv4.icanhazip.com/")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("api status[%d] incorrect", resp.StatusCode)
+	}
+
+	ip, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(strings.Trim(string(ip), "\n"))
 
 	return nil
 }
